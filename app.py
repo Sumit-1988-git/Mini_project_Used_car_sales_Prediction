@@ -26,18 +26,18 @@ car_age = 2025 - car_year
 # Prepare the input data
 input_data = {
     'km_driven': km_driven,
-    'car_age': car_age,
-    'fuel_Petrol': 1 if fuel_type == 'Petrol' else 0,
-    'fuel_Diesel': 1 if fuel_type == 'Diesel' else 0,
-    'fuel_CNG': 1 if fuel_type == 'CNG' else 0,
+    'fuel_CNG': 1 if fuel_type == 'CNG' else 0,    
+    'fuel_Diesel': 1 if fuel_type == 'Diesel' else 0,    
     'fuel_Electric': 1 if fuel_type == 'Electric' else 0,
-    'transmission_Manual': 1 if transmission == 'Manual' else 0,
+    'fuel_Petrol': 1 if fuel_type == 'Petrol' else 0,    
     'transmission_Automatic': 1 if transmission == 'Automatic' else 0,
+    'transmission_Manual': 1 if transmission == 'Manual' else 0,
     'owner_1st_Owner': 1 if owner == '1st_Owner' else 0,
     'owner_2nd_Owner': 1 if owner == '2nd_Owner' else 0,
     'owner_3rd_Owner': 1 if owner == '3rd_Owner' else 0,
     'owner_4th_Owner': 1 if owner == '4th_Owner' else 0,
-    'owner_5th_Owner': 1 if owner == '5th_Owner' else 0
+    'owner_5th_Owner': 1 if owner == '5th_Owner' else 0,
+    'car_age': car_age
 }
 
 # Convert the input data to a DataFrame
@@ -51,3 +51,4 @@ input_df[['km_driven', 'car_age']] = scaler.fit_transform(input_df[['km_driven',
 if st.sidebar.button("Predict Price"):
     predicted_price = model.predict(input_df)
     st.write(f"The predicted selling price for the car is: ₹{predicted_price[0]:,.2f}")
+
