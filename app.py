@@ -1,49 +1,18 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 import pickle
 from catboost import CatBoostRegressor
 
 # Load the pre-trained CatBoost model
-with open('catboost_model.pkl', 'rb') as f:
-    catboost_model = pickle.load(f)
-
-# Define function for data preprocessing
-def preprocess_data(df):
-    # Drop duplicates
-    df.drop_duplicates(inplace=True)
-    # Replace 'Fourth & Above Owner' with '4th_Owner'
-    df['owner'] = df['owner'].replace({'Fourth & Above Owner': '4th_Owner'})
-    
-    # Categorical features to one-hot encoding
-    categorical_cols = ['fuel', 'seller_type', 'transmission','owner']
-    df_encoded = pd.get_dummies(df, columns=categorical_cols)
-    
-    # Remove outliers
-    Q1 = df_encoded["selling_price"].quantile(0.25)
-    Q3 = df_encoded["selling_price"].quantile(0.75)
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    df_encoded = df_encoded[(df_encoded["selling_price"] >= lower_bound) & (df_encoded["selling_price"] <= upper_bound)]
-    
-    # Scale numeric columns
-    numeric_cols = ['km_driven', 'car_age']
-    scaler = StandardScaler()
-    df_encoded[numeric_cols] = scaler.fit_transform(df_encoded[numeric_cols])
-    
-    return df_encoded
-
-# Function to predict the price using CatBoost
-def predict_price(model, input_data):
-    return model.predict(input_data)
+with open('catboost_model.pkl', 'rb') as file:
+    catboost_model = pickle.load(file)
 
 # Streamlit interface for the user
-st.title("Used Car Sales Prediction")
+st.title("Used Car Sales Prediction with CatBoost")
 
 st.markdown("""
-    This app predicts the selling price of a used car based on its features such as year, km_driven, fuel type, transmission, and more.
+    This app predicts the selling price of a used car based on its features using a pre-trained CatBoost model.
     Please input the car details below to get a price prediction.
 """)
 
@@ -80,10 +49,9 @@ input_data['car_age'] = car_age
 
 # Prediction button
 if st.button('Predict Price'):
-    # Preprocess the input data for the model
-    input_data_processed = preprocess_data(input_data)
+    # Predict the price using the loaded CatBoost model
+    price_cb = catboost_model.predict(input_data)
     
-    # Predict the price using CatBoost model
-    price_catboost = predict_price(catboost_model, input_data_processed)
-    
-    st.write(f"Predicted Price using CatBoost: ₹{round(price_catboost[0], 2)}")
+    st.write(f"Predicted Price using CatBoost: ₹{round(price_cb[0], 2)}")
+
+# Run the Streamlit app using: streamlit run app.py
