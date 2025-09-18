@@ -1,48 +1,53 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import pickle
-from catboost import CatBoostRegressor
+from sklearn.preprocessing import StandardScaler
 
-# Load the trained model
-with open('catboost_model.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
+# Load the pre-trained CatBoost model
+model = pickle.load(open('catboost_model.pkl', 'rb'))
 
-# Streamlit app header
-st.title("Used Car Price Prediction")
-st.markdown("This app predicts the price of a used car based on user inputs.")
+# Streamlit app layout
+st.title("Car Sales Price Prediction")
 
-# User input fields
-year = st.number_input("Car Year", min_value=1990, max_value=2025, step=1, value=2020)
-km_driven = st.number_input("Kilometers Driven", min_value=1000, max_value=300000, step=1000, value=50000)
-fuel = st.selectbox("Fuel Type", ['Petrol', 'Diesel', 'CNG', 'Electric'])
-seller_type = st.selectbox("Seller Type", ['Individual', 'Dealer'])
-transmission = st.selectbox("Transmission Type", ['Manual', 'Automatic'])
-owner = st.selectbox("Previous Owners", ['First Owner', 'Second Owner', 'Third Owner', 'Fourth & Above Owner'])
+# Collect user input for prediction
+st.sidebar.header("Enter Car Details")
 
-# Prepare the input data for prediction
-input_data = pd.DataFrame({
-    'year': [year],
-    'km_driven': [km_driven],
-    'fuel': [fuel],
-    'seller_type': [seller_type],
-    'transmission': [transmission],
-    'owner': [owner]
-})
+# User inputs for prediction
+car_year = st.sidebar.number_input("Car Year", min_value=2000, max_value=2025, value=2015)
+km_driven = st.sidebar.number_input("Kilometers Driven (in km)", min_value=0, value=50000)
+fuel_type = st.sidebar.selectbox("Fuel Type", ["Petrol", "Diesel", "CNG", "Electric"])
+transmission = st.sidebar.selectbox("Transmission", ["Manual", "Automatic"])
+owner = st.sidebar.selectbox("Number of Owners", ["1st_Owner", "2nd_Owner", "3rd_Owner", "4th_Owner", "5th_Owner"])
 
-# Map categorical variables if needed (e.g., replacing 'Fourth & Above Owner' with '4th_Owner')
-input_data['owner'] = input_data['owner'].replace({'Fourth & Above Owner': '4th_Owner'})
+# Calculate car age
+car_age = 2025 - car_year
 
-# Convert categorical columns to the proper type that CatBoost can handle
-categorical_cols = ['fuel', 'seller_type', 'transmission', 'owner']
-for col in categorical_cols:
-    input_data[col] = input_data[col].astype('category')
+# Prepare the input data
+input_data = {
+    'km_driven': km_driven,
+    'car_age': car_age,
+    'fuel_Petrol': 1 if fuel_type == 'Petrol' else 0,
+    'fuel_Diesel': 1 if fuel_type == 'Diesel' else 0,
+    'fuel_CNG': 1 if fuel_type == 'CNG' else 0,
+    'fuel_Electric': 1 if fuel_type == 'Electric' else 0,
+    'transmission_Manual': 1 if transmission == 'Manual' else 0,
+    'transmission_Automatic': 1 if transmission == 'Automatic' else 0,
+    'owner_1st_Owner': 1 if owner == '1st_Owner' else 0,
+    'owner_2nd_Owner': 1 if owner == '2nd_Owner' else 0,
+    'owner_3rd_Owner': 1 if owner == '3rd_Owner' else 0,
+    'owner_4th_Owner': 1 if owner == '4th_Owner' else 0,
+    'owner_5th_Owner': 1 if owner == '5th_Owner' else 0
+}
 
-# Ensure the CatBoost model knows which features are categorical
-cat_features = ['fuel', 'seller_type', 'transmission', 'owner']
+# Convert the input data to a DataFrame
+input_df = pd.DataFrame([input_data])
 
-# Prediction
-if st.button('Predict Price'):
-    # Make prediction using the CatBoost model
-    prediction = model.predict(input_data, cat_features=cat_features)
-    
-    st.write(f"Predicted Price: ₹{prediction[0]:,.2f}")
+# Load scaler and scale numeric features
+scaler = StandardScaler()
+input_df[['km_driven', 'car_age']] = scaler.fit_transform(input_df[['km_driven', 'car_age']])
+
+# Predict the selling price using the model
+if st.sidebar.button("Predict Price"):
+    predicted_price = model.predict(input_df)
+    st.write(f"The predicted selling price for the car is: ₹{predicted_price[0]:,.2f}")
