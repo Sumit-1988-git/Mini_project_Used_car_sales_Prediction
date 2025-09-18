@@ -4,7 +4,7 @@ import pickle
 from catboost import CatBoostRegressor
 
 # Load the trained model
-with open('/mnt/data/catboost_model.pkl', 'rb') as model_file:
+with open('catboost_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
 # Streamlit app header
@@ -43,3 +43,4 @@ if st.button('Predict Price'):
     prediction = model.predict(input_data)
     
     st.write(f"Predicted Price: ₹{prediction[0]:,.2f}")
+
