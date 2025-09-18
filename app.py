@@ -37,10 +37,12 @@ categorical_cols = ['fuel', 'seller_type', 'transmission', 'owner']
 for col in categorical_cols:
     input_data[col] = input_data[col].astype('category')
 
+# Ensure the CatBoost model knows which features are categorical
+cat_features = ['fuel', 'seller_type', 'transmission', 'owner']
+
 # Prediction
 if st.button('Predict Price'):
     # Make prediction using the CatBoost model
-    prediction = model.predict(input_data)
+    prediction = model.predict(input_data, cat_features=cat_features)
     
     st.write(f"Predicted Price: ₹{prediction[0]:,.2f}")
-
