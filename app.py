@@ -20,26 +20,28 @@ st.markdown("""
 year = st.number_input('Year of Manufacture', min_value=2000, max_value=2025, value=2015)
 km_driven = st.number_input('Kilometers Driven (in KMs)', min_value=0, max_value=500000, value=50000)
 fuel = st.selectbox('Fuel Type', ['Petrol', 'Diesel', 'CNG', 'LPG', 'Electric'])
-seller_type = st.selectbox('Seller Type', ['Individual', 'Dealer'])
+seller_type = st.selectbox('Seller Type', ['Individual', 'Dealer', 'Trustmark Dealer'])
 transmission = st.selectbox('Transmission Type', ['Manual', 'Automatic'])
 owner = st.selectbox('Owner Type', ['1st Owner', '2nd Owner', '3rd Owner', '4th_Owner'])
 
 # Prepare the input data for prediction (Make sure the column names match the trained model's expected feature names)
 input_data = pd.DataFrame({
     'km_driven': [km_driven],  # Ensure this matches your training data feature name
-    'fuel_Petrol': [1 if fuel == 'Petrol' else 0],
+	'fuel_CNG': [1 if fuel == 'CNG' else 0],   
     'fuel_Diesel': [1 if fuel == 'Diesel' else 0],
-    'fuel_CNG': [1 if fuel == 'CNG' else 0],
-    'fuel_LPG': [1 if fuel == 'LPG' else 0],
     'fuel_Electric': [1 if fuel == 'Electric' else 0],
-    'seller_type_Individual': [1 if seller_type == 'Individual' else 0],
-    'seller_type_Dealer': [1 if seller_type == 'Dealer' else 0],
-    'transmission_Manual': [1 if transmission == 'Manual' else 0],
+	'fuel_LPG': [1 if fuel == 'LPG' else 0],
+	'fuel_Petrol': [1 if fuel == 'Petrol' else 0],
+	'seller_type_Dealer': [1 if seller_type == 'Dealer' else 0],
+    'seller_type_Individual': [1 if seller_type == 'Individual' else 0],   
+	'seller_type_Trustmark Dealer	': [1 if seller_type == 'Trustmark Dealer' else 0],	
     'transmission_Automatic': [1 if transmission == 'Automatic' else 0],
-    'owner_1st Owner': [1 if owner == '1st Owner' else 0],
-    'owner_2nd Owner': [1 if owner == '2nd Owner' else 0],
-    'owner_3rd Owner': [1 if owner == '3rd Owner' else 0],
-    'owner_4th_Owner': [1 if owner == '4th_Owner' else 0],
+	'transmission_Manual': [1 if transmission == 'Manual' else 0],
+	'owner_4th_Owner': [1 if owner == '4th_Owner' else 0],
+    'owner_First Owner': [1 if owner == '1st Owner' else 0],
+    'owner_Second Owner': [1 if owner == '2nd Owner' else 0],
+    'owner_Third Owner': [1 if owner == '3rd Owner' else 0],
+    
 })
 
 # Add car age to the input data (make sure to add this if it was used in the model training)
