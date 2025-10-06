@@ -30,8 +30,8 @@ pip install streamlit pandas numpy scikit-learn catboost
 
 Clone the repository to your local machine using the following command:
 ```
-git clone https://github.com/yourusername/used-car-sales-prediction.git
-cd used-car-sales-prediction
+git clone https://github.com/Sumit-1988-git/Mini_project_Used_car_sales_Prediction.git
+cd Mini_project_Used_car_sales_Prediction
 ```
 
 ### CatBoost Model
