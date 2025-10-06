@@ -64,3 +64,6 @@ Results: The app will display the predicted price based on the CatBoost model.
 * requirements.txt: List of all Python packages required for this project.
   
 * Demo.webm : Contains the demo video of the application
+
+### Check it LIVE
+Here is the link of streamlit app [https://miniprojectusedcarsalesprediction-gbscrfxrqxvonuyhxhwfuf.streamlit.app/]
